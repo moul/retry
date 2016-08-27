@@ -1,0 +1,4 @@
+package: github.com/moul/retry
+import:
+- package: github.com/dustin/go-humanize
+- package: github.com/urfave/cli
