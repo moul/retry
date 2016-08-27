@@ -29,6 +29,18 @@ func main() {
 			Usage:  "don't print errors",
 			EnvVar: "RETRY_QUIET",
 		},
+		/*cli.Float64Flag{
+			Name:   "timeout, t",
+			Usage:  "maximum seconds per attempt (disabled=0)",
+			EnvVar: "RETRY_TIMEOUT",
+			Value:  0,
+		},*/
+		/*cli.Float64Flag{
+			Name: "every, e",
+			Usage: "ensure is attempt is called every N seconds (similar to cron)",
+			EnvVar: "RETRY_EVERY",
+			Value: 0,
+		},*/
 	}
 
 	app.Action = retry
@@ -61,5 +73,6 @@ func retry(c *cli.Context) error {
 		}
 		time.Sleep(time.Duration(interval*1000) * time.Millisecond)
 	}
+	// FIXME: display stats on quit (attempts, total duration, success rate)
 	return nil
 }
