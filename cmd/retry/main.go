@@ -49,6 +49,11 @@ func main() {
 }
 
 func retry(c *cli.Context) error {
+	if len(c.Args()) < 1 {
+		cli.ShowAppHelp(c)
+		return nil
+	}
+
 	startTime := time.Now()
 	attempt := 0
 
@@ -82,6 +87,9 @@ func retry(c *cli.Context) error {
 	if !c.Bool("quiet") {
 		endTime := time.Now()
 		totalDuration := humanize.RelTime(endTime, startTime, "", "")
+		if totalDuration == "now" {
+			totalDuration = "0 second"
+		}
 		log.Printf("Command succeeded on attempt %d with a total duration of %s", attempt, totalDuration)
 	}
 
