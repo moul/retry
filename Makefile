@@ -11,3 +11,8 @@ $(NAME): $(SOURCE)
 
 .PHONY: build
 build: $(NAME)
+
+
+.PHONY: install
+install:
+	go install ./cmd/$(NAME)
