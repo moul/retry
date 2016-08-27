@@ -63,6 +63,14 @@ GLOBAL OPTIONS:
 
 ## Install
 
+#### Using Homebrew
+
+1. `brew tap moul/moul`
+2. `brew update`
+3. `brew install retry`
+
+#### Using Golang
+
 1. Install and configure Golang
 2. Get the sources with `go get github.com/moul/retry/cmd/retry`
 3. Compile and install the binary with `go install github.com/moul/retry/cmd/retry`
