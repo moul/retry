@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"time"
 
+	"github.com/dustin/go-humanize"
 	"github.com/urfave/cli"
 )
 
@@ -48,7 +49,11 @@ func main() {
 }
 
 func retry(c *cli.Context) error {
+	startTime := time.Now()
+	attempt := 0
+
 	for {
+		attempt++
 		cmd := exec.Command(c.Args()[0], c.Args()[1:]...)
 
 		cmd.Stderr = os.Stderr
@@ -65,7 +70,7 @@ func retry(c *cli.Context) error {
 		}
 
 		if !c.Bool("quiet") {
-			log.Printf("Command finished with error: %v", err)
+			log.Printf("run %d: command finished with error: %v", attempt, err)
 		}
 		interval := c.Float64("interval")
 		if interval < 0.1 {
@@ -73,6 +78,12 @@ func retry(c *cli.Context) error {
 		}
 		time.Sleep(time.Duration(interval*1000) * time.Millisecond)
 	}
-	// FIXME: display stats on quit (attempts, total duration, success rate)
+
+	if !c.Bool("quiet") {
+		endTime := time.Now()
+		totalDuration := humanize.RelTime(endTime, startTime, "", "")
+		log.Printf("Command succeeded on attempt %d with a total duration of %s", attempt, totalDuration)
+	}
+
 	return nil
 }
