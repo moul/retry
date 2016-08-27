@@ -24,6 +24,11 @@ func main() {
 			Value:  1.0,
 			EnvVar: "RETRY_INTERVAL",
 		},
+		cli.BoolFlag{
+			Name:   "quiet, q",
+			Usage:  "don't print errors",
+			EnvVar: "RETRY_QUIET",
+		},
 	}
 
 	app.Action = retry
@@ -47,7 +52,9 @@ func retry(c *cli.Context) error {
 			break
 		}
 
-		log.Printf("Command finished with error: %v", err)
+		if !c.Bool("quiet") {
+			log.Printf("Command finished with error: %v", err)
+		}
 		time.Sleep(time.Duration(c.Float64("interval")*1000) * time.Millisecond)
 	}
 	return nil
