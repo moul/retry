@@ -55,7 +55,11 @@ func retry(c *cli.Context) error {
 		if !c.Bool("quiet") {
 			log.Printf("Command finished with error: %v", err)
 		}
-		time.Sleep(time.Duration(c.Float64("interval")*1000) * time.Millisecond)
+		interval := c.Float64("interval")
+		if interval < 0.1 {
+			interval = 0.1
+		}
+		time.Sleep(time.Duration(interval*1000) * time.Millisecond)
 	}
 	return nil
 }
