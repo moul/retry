@@ -8,20 +8,23 @@ import (
 )
 
 func main() {
-	succeed := false
-
-	for !succeed {
+	for {
 		cmd := exec.Command(os.Args[1], os.Args[2:]...)
+
+		cmd.Stderr = os.Stderr
+		cmd.Stdout = os.Stdout
+		cmd.Stdin = os.Stdin
+
 		if err := cmd.Start(); err != nil {
 			log.Fatal(err)
 		}
 
 		err := cmd.Wait()
-		if err != nil {
-			log.Printf("Command finished with error: %v", err)
-		} else {
-			succeed = true
+		if err == nil {
+			break
 		}
+
+		log.Printf("Command finished with error: %v", err)
 		time.Sleep(1 * time.Second)
 	}
 }
