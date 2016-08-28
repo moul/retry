@@ -16,3 +16,8 @@ build: $(NAME)
 .PHONY: install
 install:
 	go install ./cmd/$(NAME)
+
+
+.PHONY: docker
+docker:
+	docker build -t moul/retry .
