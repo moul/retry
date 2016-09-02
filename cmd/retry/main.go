@@ -51,13 +51,14 @@ func main() {
 	}
 
 	app.Action = retry
-	app.Run(os.Args)
+	if err := app.Run(os.Args); err != nil {
+		log.Fatalf("Runtime error: %v", err)
+	}
 }
 
 func retry(c *cli.Context) error {
 	if len(c.Args()) < 1 {
-		cli.ShowAppHelp(c)
-		return nil
+		return cli.ShowAppHelp(c)
 	}
 
 	startTime := time.Now()
