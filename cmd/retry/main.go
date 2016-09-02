@@ -63,9 +63,14 @@ func retry(c *cli.Context) error {
 	startTime := time.Now()
 	attempt := 0
 
+	command := c.Args()
+	if len(command) == 1 {
+		command = []string{"/bin/sh", "-c", command[0]}
+	}
+
 	for {
 		attempt++
-		cmd := exec.Command(c.Args()[0], c.Args()[1:]...)
+		cmd := exec.Command(command[0], command[1:]...)
 
 		cmd.Stderr = os.Stderr
 		cmd.Stdout = os.Stdout
