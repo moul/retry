@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"os/exec"
@@ -29,6 +30,11 @@ func main() {
 			Name:   "quiet, q",
 			Usage:  "don't print errors",
 			EnvVar: "RETRY_QUIET",
+		},
+		cli.BoolFlag{
+			Name:   "clear, c",
+			Usage:  "clear screen between each attempts",
+			EnvVar: "RETRY_CLEAR",
 		},
 		/*cli.Float64Flag{
 			Name:   "timeout, t",
@@ -82,6 +88,9 @@ func retry(c *cli.Context) error {
 			interval = 0.1
 		}
 		time.Sleep(time.Duration(interval*1000) * time.Millisecond)
+		if c.Bool("clear") {
+			fmt.Print("\x1bc")
+		}
 	}
 
 	if !c.Bool("quiet") {
@@ -90,6 +99,7 @@ func retry(c *cli.Context) error {
 		if totalDuration == "now" {
 			totalDuration = "0 second"
 		}
+		fmt.Fprintln(os.Stderr)
 		log.Printf("Command succeeded on attempt %d with a total duration of %s", attempt, totalDuration)
 	}
 
