@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -36,12 +37,12 @@ func main() {
 			Usage:  "clear screen between each attempts",
 			EnvVar: "RETRY_CLEAR",
 		},
-		/*cli.Float64Flag{
+		cli.Float64Flag{
 			Name:   "timeout, t",
 			Usage:  "maximum seconds per attempt (disabled=0)",
 			EnvVar: "RETRY_TIMEOUT",
 			Value:  0,
-		},*/
+		},
 		/*cli.Float64Flag{
 			Name: "every, e",
 			Usage: "ensure is attempt is called every N seconds (similar to cron)",
@@ -71,7 +72,15 @@ func retry(c *cli.Context) error {
 
 	for {
 		attempt++
-		cmd := exec.Command(command[0], command[1:]...)
+		var ctx context.Context
+		if c.Float64("timeout") > 0 {
+			var cancel context.CancelFunc
+			ctx, cancel = context.WithTimeout(context.Background(), time.Duration(c.Float64("timeout"))*time.Second)
+			defer cancel()
+		} else {
+			ctx = context.Background()
+		}
+		cmd := exec.CommandContext(ctx, command[0], command[1:]...)
 
 		cmd.Stderr = os.Stderr
 		cmd.Stdout = os.Stdout
@@ -86,9 +95,16 @@ func retry(c *cli.Context) error {
 			break
 		}
 
-		if !c.Bool("quiet") {
-			log.Printf("run %d: command finished with error: %v", attempt, err)
+		if ctx.Err() == context.DeadlineExceeded {
+			if !c.Bool("quiet") {
+				log.Printf("run %d: command timed out", attempt)
+			}
+		} else {
+			if !c.Bool("quiet") {
+				log.Printf("run %d: command finished with error: %v", attempt, err)
+			}
 		}
+
 		interval := c.Float64("interval")
 		if interval < 0.1 {
 			interval = 0.1
