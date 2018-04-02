@@ -10,7 +10,7 @@ import (
 	"reflect"
 
 	"github.com/BurntSushi/toml"
-	"github.com/urfave/cli"
+	"gopkg.in/urfave/cli.v1"
 )
 
 type tomlMap struct {
@@ -57,8 +57,8 @@ func unmarshalMap(i interface{}) (ret map[interface{}]interface{}, err error) {
 			} else {
 				return nil, err
 			}
-		case reflect.Array:
-			fallthrough // [todo] - Support array type
+		case reflect.Array, reflect.Slice:
+			ret[key] = val.([]interface{})
 		default:
 			return nil, fmt.Errorf("Unsupported: type = %#v", v.Kind())
 		}
