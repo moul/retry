@@ -43,6 +43,12 @@ func main() {
 			EnvVar: "RETRY_TIMEOUT",
 			Value:  0,
 		},
+		cli.IntFlag{
+			Name:   "max-attempts, m",
+			Usage:  "quit after NUM attempts",
+			EnvVar: "RETRY_MAX_ATTEMPTS",
+			Value:  0,
+		},
 		/*cli.Float64Flag{
 			Name: "every, e",
 			Usage: "ensure is attempt is called every N seconds (similar to cron)",
@@ -70,6 +76,8 @@ func retry(c *cli.Context) error {
 		command = []string{"/bin/sh", "-c", command[0]}
 	}
 
+	succeed := false
+	maxAttempts := c.Int("max-attempts")
 	for {
 		attempt++
 		var ctx context.Context
@@ -92,6 +100,7 @@ func retry(c *cli.Context) error {
 
 		err := cmd.Wait()
 		if err == nil {
+			succeed = true
 			break
 		}
 
@@ -103,6 +112,10 @@ func retry(c *cli.Context) error {
 			if !c.Bool("quiet") {
 				log.Printf("run %d: command finished with error: %v", attempt, err)
 			}
+		}
+
+		if maxAttempts > 0 && attempt >= maxAttempts {
+			break
 		}
 
 		interval := c.Float64("interval")
@@ -122,7 +135,11 @@ func retry(c *cli.Context) error {
 			totalDuration = "0 second"
 		}
 		fmt.Fprintln(os.Stderr)
-		log.Printf("Command succeeded on attempt %d with a total duration of %s", attempt, totalDuration)
+		if succeed {
+			log.Printf("Command succeeded on attempt %d with a total duration of %s", attempt, totalDuration)
+		} else {
+			log.Printf("Command failed %d times with a total duration of %s", attempt, totalDuration)
+		}
 	}
 
 	return nil

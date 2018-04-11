@@ -58,6 +58,7 @@ GLOBAL OPTIONS:
    --interval value, -n value      	seconds to wait between attempts (default: 1) [$RETRY_INTERVAL]
    --quiet, -q 			            don't print errors [$RETRY_QUIET]
    --clear, -c                      clear screen between each attempts [$RETRY_CLEAR]
+   --max-attempts value, -m value   quit after NUM attempts (default: 0) [$RETRY_MAX_ATTEMPTS]
    --timeout value, -t value        maximum seconds per attempt (disabled=0) (default: 0) [$RETRY_TIMEOUT]
    --help, -h  			            show help
    --version, -v       		        print the version
