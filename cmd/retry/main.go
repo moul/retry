@@ -8,7 +8,7 @@ import (
 	"os/exec"
 	"time"
 
-	"github.com/dustin/go-humanize"
+	humanize "github.com/dustin/go-humanize"
 	"github.com/urfave/cli"
 )
 
@@ -48,6 +48,11 @@ func main() {
 			Usage:  "quit after NUM attempts",
 			EnvVar: "RETRY_MAX_ATTEMPTS",
 			Value:  0,
+		},
+		cli.BoolFlag{
+			Name:   "reverse-behavior, r",
+			Usage:  "inverse behavior, stop on first fail",
+			EnvVar: "RETRY_REVERSE_BEHAVIOR",
 		},
 		/*cli.Float64Flag{
 			Name: "every, e",
@@ -99,9 +104,16 @@ func retry(c *cli.Context) error {
 		}
 
 		err := cmd.Wait()
-		if err == nil {
-			succeed = true
-			break
+		if c.Bool("reverse-behavior") {
+			if err != nil {
+				succeed = true
+				break
+			}
+		} else {
+			if err == nil {
+				succeed = true
+				break
+			}
 		}
 
 		if ctx.Err() == context.DeadlineExceeded {
