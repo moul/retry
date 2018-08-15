@@ -1,8 +1,0 @@
-hash: 2cc1fadf622aaffadbe07fca46d78d92489d940dc2e8b2608d01a56533930bad
-updated: 2018-04-02T04:13:44.681774+02:00
-imports:
-- name: github.com/dustin/go-humanize
-  version: bb3d318650d48840a39aa21a027c6630e198e626
-- name: github.com/urfave/cli
-  version: cfb38830724cc34fedffe9a2a29fb54fa9169cd1
-testImports: []
