@@ -21,3 +21,9 @@ install:
 .PHONY: docker
 docker:
 	docker build -t moul/retry .
+
+
+.PHONY: cross
+cross:
+	go get github.com/mitchellh/gox
+	gox ./cmd/retry
