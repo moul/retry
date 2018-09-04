@@ -1,6 +1,6 @@
 FROM golang:1.10 as build
-COPY . /go/src/github.com/moul/retry
-WORKDIR /go/src/github.com/moul/retry
+COPY . /go/src/moul.io/retry
+WORKDIR /go/src/moul.io/retry
 RUN make install
 
 FROM alpine

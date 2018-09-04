@@ -2,26 +2,14 @@ NAME =		retry
 SOURCE :=	$(shell find . -name "*.go")
 
 
-all: build
-
-
-$(NAME): $(SOURCE)
-	go build -o ./$(NAME) ./cmd/$(NAME)/main.go
-
-
-.PHONY: build
-build: $(NAME)
-
-
-.PHONY: install
-install:
-	go install ./cmd/$(NAME)
-
+all: install
+install: $(GOPATH)/bin/retry
+$(GOPATH)/bin/retry: $(SOURCE)
+	go install -v
 
 .PHONY: docker
 docker:
 	docker build -t moul/retry .
-
 
 .PHONY: cross
 cross:
