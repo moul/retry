@@ -1,6 +1,6 @@
-module github.com/moul/retry
+module moul.io/retry
 
 require (
-	github.com/dustin/go-humanize v0.0.0-20171111073723-bb3d318650d4
+	github.com/dustin/go-humanize v0.0.0-20180713052910-9f541cc9db5d
 	github.com/urfave/cli v1.20.0
 )

@@ -48,36 +48,35 @@ USAGE:
    retry [global options] command [command options] [arguments...]
 
 VERSION:
-   0.1.0
+   0.4.0
 
 AUTHOR(S):
-   Manfred Touron <https://github.com/moul/retry>
+   Manfred Touron <https://moul.io/retry>
 
 COMMANDS:
+   help, h  Shows a list of commands or help for one command
+
 GLOBAL OPTIONS:
-   --interval value, -n value      	seconds to wait between attempts (default: 1) [$RETRY_INTERVAL]
-   --quiet, -q 			            don't print errors [$RETRY_QUIET]
-   --clear, -c                      clear screen between each attempts [$RETRY_CLEAR]
-   --max-attempts value, -m value   quit after NUM attempts (default: 0) [$RETRY_MAX_ATTEMPTS]
-   --timeout value, -t value        maximum seconds per attempt (disabled=0) (default: 0) [$RETRY_TIMEOUT]
-   --help, -h  			            show help
-   --version, -v       		        print the version
+   --interval value, -n value      seconds to wait between attempts (default: 1) [$RETRY_INTERVAL]
+   --quiet, -q                     don't print errors [$RETRY_QUIET]
+   --clear, -c                     clear screen between each attempts [$RETRY_CLEAR]
+   --timeout value, -t value       maximum seconds per attempt (disabled=0) (default: 0) [$RETRY_TIMEOUT]
+   --max-attempts value, -m value  quit after NUM attempts (default: 0) [$RETRY_MAX_ATTEMPTS]
+   --reverse-behavior, -r          inverse behavior, stop on first fail [$RETRY_REVERSE_BEHAVIOR]
+   --help, -h                      show help
+   --version, -v                   print the version
 ```
 
 ## Install
 
-#### Using Homebrew
-
-1. `brew tap moul/moul`
-2. `brew update`
-3. `brew install retry`
-
-#### Using Golang
+#### With Golang
 
 1. Install and configure Golang
-2. Get the sources with `go get github.com/moul/retry/cmd/retry`
-3. Compile and install the binary with `go install github.com/moul/retry/cmd/retry`
-4. Profit
+2. `go get moul.io/retry`
+
+#### With Homebrew
+
+    brew install moul/moul/retry
 
 ## License
 

@@ -1,4 +1,4 @@
-package main
+package main // import "moul.io/retry"
 
 import (
 	"context"
@@ -16,8 +16,8 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "retry"
 	app.Author = "Manfred Touron"
-	app.Email = "https://github.com/moul/retry"
-	app.Version = "0.1.0"
+	app.Email = "https://moul.io/retry"
+	app.Version = "0.4.0"
 	app.Usage = "retry"
 
 	app.Flags = []cli.Flag{
