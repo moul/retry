@@ -5,7 +5,7 @@ SOURCE :=	$(shell find . -name "*.go")
 all: install
 install: $(GOPATH)/bin/retry
 $(GOPATH)/bin/retry: $(SOURCE)
-	go install -v
+	GO111MODULE=auto go install -v
 
 .PHONY: docker
 docker:
