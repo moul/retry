@@ -3,8 +3,8 @@ require "language/go"
 class Retry < Formula
   desc "retry: repeat shell commands"
   homepage "https://github.com/moul/retry"
-  url "https://github.com/moul/retry/archive/v0.2.0.tar.gz"
-  sha256 "1e69a41a99a64c3b49fc5588c733bd90a404c9a7132717a89f7569dee0512c9f"
+  url "https://github.com/moul/retry/archive/v0.4.0.tar.gz"
+  sha256 "1feb8586da7e50227dc13badee37db2e8b981592f00f28b69cf3b8260a384168"
 
   head "https://github.com/moul/retry.git"
 
@@ -13,8 +13,8 @@ class Retry < Formula
   def install
     ENV["GOPATH"] = buildpath
     ENV["GOBIN"] = buildpath
-    (buildpath/"src/github.com/moul/retry").install Dir["*"]
+    (buildpath/"src/moul.io/retry").install Dir["*"]
 
-    system "go", "build", "-o", "#{bin}/retry", "-v", "github.com/moul/retry/cmd/retry/"
+    system "go", "build", "-o", "#{bin}/retry", "-v", "moul.io/retry"
   end
 end
