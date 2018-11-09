@@ -151,6 +151,7 @@ func retry(c *cli.Context) error {
 			log.Printf("Command succeeded on attempt %d with a total duration of %s", attempt, totalDuration)
 		} else {
 			log.Printf("Command failed %d times with a total duration of %s", attempt, totalDuration)
+			os.Exit(1)
 		}
 	}
 
