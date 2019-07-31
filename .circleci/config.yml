@@ -1,5 +1,26 @@
 version: 2.1
 
+commands:
+  install:
+    description: "Install the 'retry' utility"
+    parameters:
+      version:
+        type: string
+        default: "0.6.0"
+      sudo:
+        type: boolean
+        default: false
+      insecure:
+        type: boolean
+        default: false
+    steps:
+      - dl/install:
+          url: "https://github.com/moul/retry/releases/download/v<< parameters.version >>/retry_<< parameters.version >>_$(uname -s)_$(uname -m).tar.gz"
+          sudo: << parameters.sudo >>
+          insecure: << parameters.insecure >>
+          unarchive: retry
+      - run: retry --version
+
 executors:
   golang:
     working_directory: /go/src/moul.io/retry
@@ -11,19 +32,17 @@ executors:
 
 orbs:
   codecov: codecov/codecov@1.0.5
-  moul: moul/build@1.4.0
+  dl: moul/dl@1.7.0
 
 jobs:
   go-build:
     executor: golang
     steps:
       - checkout
-      - moul/install_retry
+      - install
       - run: retry -m 3 go mod download
       - run: retry -m 3 make install
       - run: retry -m 3 make test
-      - moul/install_golangci-lint
-      - run: PATH=$PATH:$(pwd)/bin retry -m 3 make lint
       - codecov/upload:
           file: coverage.txt
 
@@ -33,11 +52,25 @@ jobs:
       - checkout
       - setup_remote_docker:
           docker_layer_caching: true
-      - moul/install_retry
+      - install
       - run: retry -m 3 docker build -t ${DOCKER_IMAGE} .
+
+  test-orb-alpine:
+    docker:
+      - image: alpine
+    steps:
+      - install:
+          insecure: true
+
+  test-orb-golang:
+    executor: golang
+    steps:
+      - install
 
 workflows:
   main:
     jobs:
       - go-build
       - docker-build
+      - test-orb-alpine
+      - test-orb-golang
