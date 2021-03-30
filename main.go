@@ -8,59 +8,65 @@ import (
 	"os/exec"
 	"time"
 
-	humanize "github.com/dustin/go-humanize"
-	"github.com/urfave/cli"
+	"github.com/dustin/go-humanize"
+	"github.com/urfave/cli/v2"
 )
 
 func main() {
 	app := cli.NewApp()
 	app.Name = "retry"
-	app.Author = "Manfred Touron"
-	app.Email = "https://moul.io/retry"
+	author := cli.Author{
+		Name:  "Manfred Touron",
+		Email: "https://moul.io/retry",
+	}
+	app.Authors = append(app.Authors, &author)
 	app.Version = "0.4.0"
 	app.Usage = "retry"
 
-	app.Flags = []cli.Flag{
-		cli.Float64Flag{
-			Name:   "interval, n",
-			Usage:  "seconds to wait between attempts",
-			Value:  1.0,
-			EnvVar: "RETRY_INTERVAL",
-		},
-		cli.BoolFlag{
-			Name:   "quiet, q",
-			Usage:  "don't print errors",
-			EnvVar: "RETRY_QUIET",
-		},
-		cli.BoolFlag{
-			Name:   "clear, c",
-			Usage:  "clear screen between each attempts",
-			EnvVar: "RETRY_CLEAR",
-		},
-		cli.Float64Flag{
-			Name:   "timeout, t",
-			Usage:  "maximum seconds per attempt (disabled=0)",
-			EnvVar: "RETRY_TIMEOUT",
-			Value:  0,
-		},
-		cli.IntFlag{
-			Name:   "max-attempts, m",
-			Usage:  "quit after NUM attempts",
-			EnvVar: "RETRY_MAX_ATTEMPTS",
-			Value:  0,
-		},
-		cli.BoolFlag{
-			Name:   "reverse-behavior, r",
-			Usage:  "inverse behavior, stop on first fail",
-			EnvVar: "RETRY_REVERSE_BEHAVIOR",
-		},
-		/*cli.Float64Flag{
-			Name: "every, e",
-			Usage: "ensure is attempt is called every N seconds (similar to cron)",
-			EnvVar: "RETRY_EVERY",
-			Value: 0,
-		},*/
-	}
+	app.Flags = append(app.Flags, &cli.BoolFlag{
+		Name:    "help",
+		Aliases: []string{"h"},
+		Usage:   "show help",
+	})
+
+	app.Flags = append(app.Flags, &cli.BoolFlag{
+		Name:    "quiet, q",
+		Usage:   "don't print errors",
+		EnvVars: []string{"RETRY_QUIET"},
+	})
+
+	app.Flags = append(app.Flags, &cli.BoolFlag{
+		Name:    "clear, c",
+		Usage:   "clear screen between each attempts",
+		EnvVars: []string{"RETRY_CLEAR"},
+	})
+
+	app.Flags = append(app.Flags, &cli.Float64Flag{
+		Name:    "timeout, t",
+		Usage:   "maximum seconds per attempt (disabled=0)",
+		EnvVars: []string{"RETRY_TIMEOUT"},
+		Value:   0,
+	})
+
+	app.Flags = append(app.Flags, &cli.IntFlag{
+		Name:    "max-attempts, m",
+		Usage:   "quit after NUM attempts",
+		EnvVars: []string{"RETRY_MAX_ATTEMPTS"},
+		Value:   0,
+	})
+
+	app.Flags = append(app.Flags, &cli.BoolFlag{
+		Name:    "reverse-behavior, r",
+		Usage:   "inverse behavior, stop on first fail",
+		EnvVars: []string{"RETRY_REVERSE_BEHAVIOR"},
+	})
+
+	/*flags = append(flags, &cli.Float64Flag{
+		Name:    "every, e",
+		Usage:   "ensure is attempt is called every N seconds (similar to cron)",
+		EnvVars: []string{"RETRY_EVERY"},
+		Value:   0,
+	})*/
 
 	app.Action = retry
 	if err := app.Run(os.Args); err != nil {
@@ -69,7 +75,7 @@ func main() {
 }
 
 func retry(c *cli.Context) error {
-	if len(c.Args()) < 1 {
+	if c.Args().Len() < 1 {
 		return cli.ShowAppHelp(c)
 	}
 
@@ -77,8 +83,9 @@ func retry(c *cli.Context) error {
 	attempt := 0
 
 	command := c.Args()
-	if len(command) == 1 {
-		command = []string{"/bin/sh", "-c", command[0]}
+	slice := command.Slice()
+	if len(slice) == 1 {
+		slice = []string{"/bin/sh", "-c", slice[0]}
 	}
 
 	succeed := false
@@ -93,7 +100,7 @@ func retry(c *cli.Context) error {
 		} else {
 			ctx = context.Background()
 		}
-		cmd := exec.CommandContext(ctx, command[0], command[1:]...)
+		cmd := exec.CommandContext(ctx, slice[0], slice[1:]...)
 
 		cmd.Stderr = os.Stderr
 		cmd.Stdout = os.Stdout
@@ -146,7 +153,10 @@ func retry(c *cli.Context) error {
 		if totalDuration == "now" {
 			totalDuration = "0 second"
 		}
-		fmt.Fprintln(os.Stderr)
+		_, err := fmt.Fprintln(os.Stderr)
+		if err != nil {
+			os.Exit(1)
+		}
 		if succeed {
 			log.Printf("Command succeeded on attempt %d with a total duration of %s", attempt, totalDuration)
 		} else {
