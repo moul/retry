@@ -23,6 +23,13 @@ func main() {
 	app.Version = "0.4.0"
 	app.Usage = "retry"
 
+	app.Flags = append(app.Flags, &cli.Float64Flag{
+		Name:    "interval, n",
+		Usage:   "seconds to wait between attempts",
+		Value:   1.0,
+		EnvVars: []string{"RETRY_INTERVAL"},
+	})
+
 	app.Flags = append(app.Flags, &cli.BoolFlag{
 		Name:    "help",
 		Aliases: []string{"h"},
@@ -153,10 +160,7 @@ func retry(c *cli.Context) error {
 		if totalDuration == "now" {
 			totalDuration = "0 second"
 		}
-		_, err := fmt.Fprintln(os.Stderr)
-		if err != nil {
-			os.Exit(1)
-		}
+		fmt.Fprintln(os.Stderr)
 		if succeed {
 			log.Printf("Command succeeded on attempt %d with a total duration of %s", attempt, totalDuration)
 		} else {
