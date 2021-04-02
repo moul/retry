@@ -1,4 +1,4 @@
-FROM golang:1.16.2-alpine as build
+FROM golang:1.16.3-alpine as build
 RUN apk add --update make
 COPY . /go/src/moul.io/retry
 WORKDIR /go/src/moul.io/retry
