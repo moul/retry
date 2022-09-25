@@ -30,11 +30,6 @@ func main() {
 		EnvVars: []string{"RETRY_INTERVAL"},
 	})
 
-	app.Flags = append(app.Flags, &cli.BoolFlag{
-		Name:    "help",
-		Aliases: []string{"h"},
-		Usage:   "show help",
-	})
 
 	app.Flags = append(app.Flags, &cli.BoolFlag{
 		Name:    "quiet, q",
