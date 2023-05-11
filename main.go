@@ -31,12 +31,6 @@ func main() {
 	})
 
 	app.Flags = append(app.Flags, &cli.BoolFlag{
-		Name:    "help",
-		Aliases: []string{"h"},
-		Usage:   "show help",
-	})
-
-	app.Flags = append(app.Flags, &cli.BoolFlag{
 		Name:    "quiet, q",
 		Usage:   "don't print errors",
 		EnvVars: []string{"RETRY_QUIET"},
